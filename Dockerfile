@@ -22,8 +22,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3 as the default python and pip command
-RUN ln -s /usr/bin/python3 /usr/bin/python \
-    && ln -s /usr/bin/pip3 /usr/bin/pip
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Verify installations
 RUN python --version && pip --version && cmake --version && gcc --version && g++ --version && ld --version
