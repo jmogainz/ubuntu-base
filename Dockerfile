@@ -19,13 +19,29 @@ RUN apt-get update && apt-get install -y \
     curl \
     vim \
     sudo \
+    zsh \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3 as the default python and pip command
 RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Install Oh My Zsh
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
+    && chsh -s $(which zsh)
+
+# Copy the default .zshrc provided by Oh My Zsh
+RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
 # Verify installations
 RUN python --version && pip --version && cmake --version && gcc --version && g++ --version && ld --version
 
 # Set the working directory
 WORKDIR /workspace
+
+# Configure Supervisor to keep the container running
+RUN mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Default command to run Supervisor
+CMD ["/usr/bin/supervisord"]
