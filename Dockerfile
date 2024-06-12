@@ -30,9 +30,6 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
     && chsh -s $(which zsh)
 
-# Install Powerlevel10k
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
-
 # Copy the default .zshrc provided by Oh My Zsh
 RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
@@ -41,10 +38,6 @@ RUN python --version && pip --version && cmake --version && gcc --version && g++
 
 # Set the working directory
 WORKDIR /workspace
-
-# Copy the .zshrc and .p10k.zsh from the build context into the container
-COPY .zshrc /root/.zshrc
-COPY .p10k.zsh /root/.p10k.zsh
 
 # Configure Supervisor to keep the container running
 RUN mkdir -p /var/log/supervisor
