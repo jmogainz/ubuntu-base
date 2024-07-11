@@ -90,11 +90,22 @@ source $ZSH/oh-my-zsh.sh
 # export LS_COLORS
 
 # llfo = link libs from onedrive
-alias ldl="sudo /home/jmoore2/i2dev/tools/system_libs_link_and_unlink/link_libs.sh --path /home/jmoore2/i2dev/tools/system_libs_for_afsim_mission"
+ldl() {
+    sudo /home/jmoore2/system_libs_unlink_link/system_libs_link_and_unlink/link_libs.sh --path "$1"
+}
 
-# ulfo = unlink libs from onedrive
-alias uldl="sudo /home/jmoore2/i2dev/tools/system_libs_link_and_unlink/unlink_libs.sh --path //home/jmoore2/i2dev/tools/system_libs_for_afsim_mission"
+# Function to unlink libs with a dynamic path argument
+uldl() {
+    sudo /home/jmoore2/system_libs_unlink_link/system_libs_link_and_unlink/unlink_libs.sh --path "$1"
+}
 
+lh() {
+    sudo /home/jmoore2/system_includes_unlink_link/link_headers.sh --path "$1"
+}
+
+ulh() {
+    sudo /home/jmoore2/system_includes_unlink_link/unlink_headers.sh --path "$1"
+}
 
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word

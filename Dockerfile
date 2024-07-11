@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     libedit-dev \
     python3 \
     python3-pip \
+    ca-certificates \
     git \
     wget \
     curl \
@@ -33,8 +34,13 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
 # Copy the default .zshrc provided by Oh My Zsh
 RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
+# Download and install Miniconda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_23.10.0-1-Linux-x86_64.sh -O /tmp/miniconda.sh \
+    && /bin/bash /tmp/miniconda.sh -b -p /opt/conda \
+    && rm /tmp/miniconda.sh
+
 # Verify installations
-RUN python --version && pip --version && cmake --version && gcc --version && g++ --version && ld --version
+RUN python --version && pip --version && cmake --version && gcc --version && g++ --version && ld --version && zsh --version
 
 # Set the working directory
 WORKDIR /workspace
