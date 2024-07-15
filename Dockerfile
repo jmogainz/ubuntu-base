@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update the package list and install basic development tools
 RUN apt-get update && apt-get install -y \
+    # personal
     build-essential \
     cmake \
     gcc \
@@ -23,8 +24,16 @@ RUN apt-get update && apt-get install -y \
     zsh \
     supervisor \
     zoxide \
+    # yamlparser
     libpcre2-dev \
     bison \
+    # afsim
+    libgl1-mesa-dev \
+    mesa-common-dev \
+    libgl1-mesa-glx \
+    libglu1-mesa-dev \
+    libjpeg62 \
+    tclsh \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3 as the default python and pip command
