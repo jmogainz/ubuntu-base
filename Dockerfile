@@ -34,6 +34,8 @@ RUN apt-get update && apt-get install -y \
     libglu1-mesa-dev \
     libjpeg62 \
     tclsh \
+    gdb \
+    zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3 as the default python and pip command
