@@ -1,5 +1,5 @@
 # Use the official Ubuntu 22.04 as the base image
-FROM ubuntu:22.04
+FROM ubuntu:18.04
 
 # Set environment variables to prevent some interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,23 +23,14 @@ RUN apt-get update && apt-get install -y \
     sudo \
     zsh \
     supervisor \
-    zoxide \
     # yamlparser
     libpcre2-dev \
     bison \
     # afsim
-    libgl1-mesa-dev \
-    mesa-common-dev \
-    libgl1-mesa-glx \
-    libglu1-mesa-dev \
-    libjpeg62 \
     tclsh \
     gdb \
     zip \
     && rm -rf /var/lib/apt/lists/*
-
-# Set Python 3 as the default python and pip command
-RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Install Oh My Zsh
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
@@ -54,9 +45,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_23.10.0-1-
     && rm /tmp/miniconda.sh
 
 # Extract the certificate from the remote server and add it to the trusted certificates
-RUN echo | openssl s_client -servername repo.torchtechnologies.com -connect repo.torchtechnologies.com:443 2>/dev/null | openssl x509 -outform PEM > /usr/local/share/ca-certificates/torchtech.crt
-# Download the DigiCert certificate
-RUN wget -q -O /usr/local/share/ca-certificates/DigiCertGlobalG2TLSRSASHA2562020CA1.crt https://cacerts.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1.crt.pem
 
 # Update CA certificates
 RUN update-ca-certificates
@@ -66,10 +54,10 @@ RUN git config --global credential.helper store \
     && git config --global http.sslCAInfo /etc/ssl/certs/ca-certificates.crt \
     && git config --global http.sslVerify true \
     && git config --global user.name "Jacob Moore" \
-    && git config --global user.email "jmoore2@torchtechnologies.com"
+    && git config --global user.email "jlmoors001@gmail.com"
 
 # Verify installations
-RUN python --version && pip --version && cmake --version && gcc --version && g++ --version && ld --version && zsh --version \
+RUN python3 --version && pip3 --version && cmake --version && gcc --version && g++ --version && ld --version && zsh --version \
     && git --version
 
 # Set the working directory
