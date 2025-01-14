@@ -86,8 +86,8 @@ RUN nvim --headless +PackerSync +qa
 
 # Install Rust and Cargo - HANGS FOR SOME REASON
 # RUN bash -c "curl https://sh.rustup.rs -sSf | sh -s -- -y \
-      && . $HOME/.cargo/env \
-      && cargo install --locked tree-sitter-cli"
+#       && . $HOME/.cargo/env \
+#       && cargo install --locked tree-sitter-cli"
 
 # Default command: launch supervisord (to keep the container running)
 CMD ["/usr/bin/supervisord"]
