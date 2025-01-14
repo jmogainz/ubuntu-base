@@ -1,0 +1,91 @@
+# Use the specified public base image
+FROM mstephenson6/cs6340-fall21-labs
+
+# Set environment variables to prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+USER root
+
+# Update the package list and install development tools, zsh, and supervisor
+# (Adjust packages if the base image is not Debian/Ubuntu-based)
+RUN apt-get update && apt-get install -y \
+    git \
+    wget \
+    curl \
+    sudo \
+    zsh \
+    supervisor \
+    # Remove apt caches
+    && rm -rf /var/lib/apt/lists/*
+
+# Install NVM
+ENV NVM_DIR=/root/.nvm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+
+# Install Node (lts) and store the version in a temporary file
+RUN bash -c ". $NVM_DIR/nvm.sh && nvm install --lts && nvm alias default lts/* && nvm use default && nvm version default > /tmp/node_version"
+
+# Read that version back and create symlinks for node, npm, and npx
+RUN export NODE_VERSION=$(cat /tmp/node_version) \
+ && ln -s "$NVM_DIR"/versions/node/$NODE_VERSION/bin/node /usr/local/bin/node \
+ && ln -s "$NVM_DIR"/versions/node/$NODE_VERSION/bin/npm /usr/local/bin/npm \
+ && ln -s "$NVM_DIR"/versions/node/$NODE_VERSION/bin/npx /usr/local/bin/npx
+
+# Verify
+RUN node -v && npm -v
+
+# Install zoxide
+RUN curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash && \
+    ln -s /root/.local/bin/zoxide /usr/local/bin/zoxide
+
+# Install Oh My Zsh non-interactively
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Install powerlevel10k (theme) into Oh My Zsh custom themes folder
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+    /root/.oh-my-zsh/custom/themes/powerlevel10k
+
+# Download and install Neovim (stable) from GitHub tarball
+WORKDIR /tmp
+RUN curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz && \
+    tar xzf nvim-linux64.tar.gz && \
+    mv nvim-linux64 /usr/local/neovim && \
+    ln -s /usr/local/neovim/bin/nvim /usr/local/bin/nvim && \
+    rm nvim-linux64.tar.gz
+
+# Clone your public dotfiles
+RUN git clone https://github.com/jmogainz/dotfiles.git /root/dotfiles
+
+# Copy relevant dotfiles to /root
+RUN cp /root/dotfiles/.zshrc /root/ && \
+    cp /root/dotfiles/.p10k.zsh /root/ && \
+    cp /root/dotfiles/.zsh_history /root/ && \
+    cp /root/dotfiles/.clang-format /root/ && \
+    cp /root/dotfiles/.clang-tidy /root/ && \
+    cp -r /root/dotfiles/.config/nvim /root/.config/
+
+# Install packer.nvim (Neovim plugin manager)
+RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim \
+    /root/.local/share/nvim/site/pack/packer/start/packer.nvim
+
+# Create Supervisor log directory
+RUN mkdir -p /var/log/supervisor
+
+# Copy in a custom supervisord config, similar to your reference snippet
+# Make sure you have a 'supervisord.conf' (or similarly named file) alongside your Dockerfile
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Set default shell to zsh
+SHELL ["/bin/zsh", "-c"]
+
+# Optionally, run packer to install plugins (headless mode)
+RUN nvim --headless +PackerSync +qa
+
+# Install Rust and Cargo - HANGS FOR SOME REASON
+# RUN bash -c "curl https://sh.rustup.rs -sSf | sh -s -- -y \
+#     && . $HOME/.cargo/env \
+#     && cargo install --locked tree-sitter-cli"
+
+# Default command: launch supervisord (to keep the container running)
+CMD ["/usr/bin/supervisord"]
+

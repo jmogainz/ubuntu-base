@@ -1,12 +1,11 @@
 # Copy .zshrc and .p10k.zsh from home directory into this directory
 
-all: setup build
+.PHONY: build-work build-sat-extention
 
-setup:
-	@echo "Setting up..."
-	@cp ~/.zshrc .
-	@cp ~/.p10k.zsh .
-
-build:
+build-work:
 	@echo "Building..."
 	@docker build -t jacobs-ubuntu .
+
+build-sat-extention:
+	@echo "Building..."
+	@docker build -t jacobs-ubuntu-sat-extention -f Dockerfile.sat-personal-extension .
