@@ -81,7 +81,5 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
 
-RUN echo "https://<username>:P%40ssw0rd@repo.example.com" > /root/.git-credentials
-
 # Default command to run Supervisor
 CMD ["/usr/bin/supervisord"]
