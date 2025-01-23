@@ -4,7 +4,7 @@
 
 build-work:
 	@echo "Building..."
-	@docker build -t jacobs-ubuntu .
+	@docker build -t jacobs-ubuntu -f Dockerfile.ubuntu-work .
 
 build-sat-extention:
 	@echo "Building..."
